@@ -25,8 +25,22 @@ type OcrKtp struct {
 }
 
 type OcrNpwp struct {
-	NpwpID   string `json:"npwpId"`
-	NpwpName string `json:"npwpName"`
+	NumberID string `json:"idNumber"`
+	Name     string `json:"name"`
+}
+
+type OcrSim struct {
+	NumberID     string `json:"idNumber"`
+	SimType      string `json:"simType"`
+	Name         string `json:"name"`
+	Address      string `json:"address"`
+	Province     string `json:"province"`
+	DistrictCity     string `json:"districtCity"`
+	PlaceOfBirth string `json:"placeOfBirth"`
+	DateOfBirth  string `json:"dateOfBirth"`
+	Gender       string `json:"gender"`
+	Occupation   string `json:"occupation"`
+	MB           string `json:"mb"`
 }
 
 func FormatDataKtp(text string) (formatKtp OcrKtp, err error) {
@@ -167,16 +181,89 @@ func FormatDataNpwp(text string) (formatNpwp OcrNpwp, err error) {
 
 		if countData == 2 {
 			replacer := strings.NewReplacer("NPWP", "")
-			formatNpwp.NpwpID = strings.TrimSpace(replacer.Replace(data))
+			formatNpwp.NumberID = strings.TrimSpace(replacer.Replace(data))
 		}
 
 		if countData == 3 {
 			// replacer := strings.NewReplacer("KABUPATEN", "")
-			formatNpwp.NpwpName = strings.TrimSpace(data)
+			formatNpwp.Name = strings.TrimSpace(data)
 		}
 
 		countData++
 	}
 
 	return formatNpwp, nil
+}
+
+func FormatDataSim(text string) (formatSim OcrSim, err error) {
+	var (
+		datas     []string
+		reg       *regexp.Regexp
+		countData int
+	)
+
+	// Split string
+	datas = strings.Split(strings.Replace(text, "\n\n", "\n", -1), "\n")
+
+	// Regex config
+	reg, _ = regexp.Compile("[^-A-Za-z0-9/.,'`: ]+")
+
+	// looping data split
+	for _, data := range datas {
+
+		data = reg.ReplaceAllString(data, "")
+
+		if countData == 1 {
+			a := strings.Split(data ,"SURAT IZIN MENGEMUDI")
+			formatSim.SimType = strings.TrimSpace(a[1])
+		}
+
+		if countData == 2 {
+			formatSim.NumberID = strings.TrimSpace(data)
+		}
+
+		if countData == 3 {
+			a := strings.Split(data ,".")
+			formatSim.Name = strings.TrimSpace(a[1])
+		}
+
+		if countData == 4 {
+			a := strings.Split(data ,".")
+			b := strings.Split(a[1] ,",")
+			formatSim.PlaceOfBirth = strings.TrimSpace(b[0])
+			formatSim.DateOfBirth = strings.TrimSpace(b[1])
+		}
+
+		if countData == 5 {
+			a := strings.Split(data ,"-")
+			formatSim.Gender = strings.TrimSpace(a[1])
+		}
+
+		if countData == 6 {
+			a := strings.Split(data ,".")
+			formatSim.Address = strings.TrimSpace(a[1])
+		}
+
+		if countData == 7 {
+			formatSim.DistrictCity = strings.TrimSpace(data)
+		}
+
+		if countData == 8 {
+			formatSim.Province = strings.TrimSpace(data)
+		}
+
+		if countData == 9 {
+			a := strings.Split(data ,".")
+			formatSim.Occupation = strings.TrimSpace(a[1])
+		}
+
+		if countData == 10 {
+			a := strings.Split(data ,".")
+			formatSim.MB = strings.TrimSpace(a[1])
+		}
+
+		countData++
+	}
+
+	return formatSim, nil
 }

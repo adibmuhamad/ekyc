@@ -17,6 +17,7 @@ type service struct {
 type Service interface {
 	CheckOcrKtp(input OcrInput) (OcrKtp, error)
 	CheckOcrNpwp(input OcrInput) (OcrNpwp, error)
+	CheckOcrSim(input OcrInput) (OcrSim, error)
 }
 
 func NewService() *service {
@@ -83,6 +84,71 @@ func (s *service) CheckOcrKtp(input OcrInput) (OcrKtp, error) {
 	}
 
 	ocr, err = FormatDataKtp(text)
+	if err != nil {
+		return ocr, err
+	}
+
+	return ocr, nil
+
+}
+
+func (s *service) CheckOcrSim(input OcrInput) (OcrSim, error) {
+	ocr := OcrSim{}
+
+	// Get base64 from json request
+	base64Image := input.OcrImage
+
+	// Decode base64 to byte
+	sDec, err := base64.StdEncoding.DecodeString(base64Image)
+	if err != nil {
+		return ocr, err
+	}
+
+	// Decode byte to image struct
+	img, _, err := image.Decode(bytes.NewReader(sDec))
+	if err != nil {
+		return ocr, err
+	}
+
+	// Validate image ktp
+	err = ValidateImage(sDec)
+	if err != nil {
+		return ocr, err
+	}
+
+	// Convert Image to grayscale
+	// grayscale := effect.Grayscale(img)
+
+	// Convert Image to threshold segment
+	// threshold := segment.Threshold(grayscale, 128)
+
+	// Convert Image to Bytes
+	buf := new(bytes.Buffer)
+	jpeg.Encode(buf, img, nil)
+
+	// Initiation Gosseract new client
+	client := gosseract.NewClient()
+
+	// close client when the main function is finished running
+	defer client.Close()
+
+	// Read byte to image and set whitelist character
+	client.SetImageFromBytes(buf.Bytes())
+	client.SetLanguage("eng")
+
+	// Get text result from OCR
+	text, err := client.Text()
+	if err != nil {
+		return ocr, err
+	}
+
+	// Validate data sim
+	err = ValidateImageSim(text)
+	if err != nil {
+		return ocr, err
+	}
+
+	ocr, err = FormatDataSim(text)
 	if err != nil {
 		return ocr, err
 	}

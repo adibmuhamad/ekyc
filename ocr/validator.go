@@ -62,3 +62,18 @@ func ValidateImageNpwp(data string) (err error) {
 
 	return errors.New("Invalid NPWP image")
 }
+
+func ValidateImageSim(data string) (err error) {
+	if len(strings.TrimSpace(data)) == 0 || err != nil {
+		return errors.New("Invalid SIM image")
+	}
+
+	var re = regexp.MustCompile(`SURAT IZIN MENGEMUDI`)
+
+	if re.MatchString(data) {
+		return nil
+	}
+
+
+	return errors.New("Invalid SIM image")
+}
