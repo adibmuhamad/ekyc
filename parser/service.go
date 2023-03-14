@@ -12,6 +12,7 @@ type service struct {
 type Service interface {
 	ParseDataKtp(input ParserInput) (Nik, error)
 	ParseDataNpwp(input ParserInput) (Npwp, error)
+	ParseDataSim(input ParserInput) (Sim, error)
 }
 
 func NewService() *service {
@@ -19,7 +20,7 @@ func NewService() *service {
 }
 
 func (s *service) ParseDataKtp(input ParserInput) (Nik, error) {
-	nikMap := NikMap{}
+	nikMap := AddressMap{}
 
 	// Read file wilayah
 	err := nikMap.ReadFileWilayah()
@@ -61,7 +62,33 @@ func (s *service) ParseDataNpwp(input ParserInput) (Npwp, error) {
 
 }
 
-func (n *NikMap) ReadFileWilayah() error {
+func (s *service) ParseDataSim(input ParserInput) (Sim, error) {
+	simMap := AddressMap{}
+
+	// Read file wilayah
+	err := simMap.ReadFileWilayah()
+	if err != nil {
+		return Sim{}, err
+	}
+
+
+	// Validate SIM number
+	err = ValidateSim(input.NumberID)
+	if err != nil {
+		return Sim{}, err
+	}
+
+	sim := Sim{}
+	sim, err = FormatDataSim(input.NumberID, simMap)
+	if err != nil {
+		return Sim{}, err
+	}
+
+	return sim, nil
+
+}
+
+func (n *AddressMap) ReadFileWilayah() error {
 	file, err := ioutil.ReadFile("assets/wilayah.json")
 	if err != nil {
 		return err

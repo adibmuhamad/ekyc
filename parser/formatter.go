@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-type NikMap struct {
+type AddressMap struct {
 	ProvinceMap map[string]interface{}
 	CityMap     map[string]interface{}
 	DistrictMap map[string]interface{}
@@ -33,15 +33,30 @@ type Npwp struct {
 	BranchCode         string `json:"branchCode"`
 }
 
-func FormatDataNik(text string, nikMap NikMap) (Nik, error) {
+type Sim struct {
+	NumberId    string `json:"idNumber"`
+	DateOfBirth string `json:"dateOfBirth"`
+	Province    string `json:"province"`
+	District    string `json:"district"`
+	Unicode     string `json:"unicode"`
+}
+
+func FormatDataNik(text string, nikMap AddressMap) (Nik, error) {
 	format := Nik{}
 	format.NumberId = text
+	if nikMap.ProvinceMap[text[0:2]] != nil {
+		format.Province = nikMap.ProvinceMap[text[0:2]].(string)
+	}
 
-	format.Province = nikMap.ProvinceMap[text[0:2]].(string)
-	format.City = nikMap.CityMap[text[0:4]].(string)
-	district := nikMap.DistrictMap[text[0:6]].(string)
-	format.District = GetDistrict(district)
-	format.PostalCode = GetPostalCode(district)
+	if nikMap.CityMap[text[0:4]] != nil {
+		format.City = nikMap.CityMap[text[0:4]].(string)
+	}
+
+	if nikMap.DistrictMap[text[0:6]] != nil {
+		district := nikMap.DistrictMap[text[0:6]].(string)
+		format.District = GetDistrict(district)
+		format.PostalCode = GetPostalCode(district)
+	}
 
 	format.Unicode = text[12:16]
 
@@ -67,6 +82,28 @@ func FormatDataNpwp(text string) (Npwp, error) {
 	format.LocalTaxOfficeCode = b[1]
 	format.BranchCode = a[4]
 
+	return format, nil
+
+}
+
+func FormatDataSim(text string, simMap AddressMap) (Sim, error) {
+	format := Sim{}
+	format.NumberId = text
+
+	print(text[5:7])
+
+	atoiMonth, _ := strconv.Atoi(text[0:2])
+	atoiYear, _ := strconv.Atoi(text[2:4])
+	format.DateOfBirth = helper.ConvertMonth(atoiMonth) + " " + strconv.Itoa(atoiYear)
+	if simMap.ProvinceMap[text[5:7]] != nil {
+		format.Province = simMap.ProvinceMap[text[5:7]].(string)
+	}
+	if simMap.DistrictMap[text[7:9]] != nil {
+		district := simMap.DistrictMap[text[7:9]].(string)
+		format.District = GetDistrict(district)
+	}
+
+	format.Unicode = text[10:]
 	return format, nil
 
 }

@@ -28,6 +28,7 @@ func main() {
 
 	api.POST("/parser/ktp", parserHandler.ParserDataNik)
 	api.POST("/parser/npwp", parserHandler.ParserDataNpwp)
+	api.POST("/parser/sim", parserHandler.ParserDataSim)
 
 	router.Run()
 

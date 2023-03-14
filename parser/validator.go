@@ -5,7 +5,7 @@ import (
 	"strings"
 )
 
-func ValidateNik(text string, nikMap NikMap) (err error) {
+func ValidateNik(text string, nikMap AddressMap) (err error) {
 	if len(text) != 16 {
 		return errors.New("Invalid NIK number")
 	}
@@ -39,4 +39,15 @@ func ValidateNpwp(text string) (err error) {
 	}
 
 	return errors.New("Invalid NPWP number")
+}
+
+func ValidateSim(text string) (err error) {
+	a := strings.Split(text, "-")
+
+	if len(a) == 3 {
+		return nil
+
+	}
+
+	return errors.New("Invalid SIM number")
 }

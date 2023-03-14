@@ -58,29 +58,29 @@ func Marshaler(a interface{}) (map[string]interface{}, error) {
 func ConvertMonth(b int) string {
 	switch b {
 	case 1:
-		return "January"
+		return "JANUARY"
 	case 2:
-		return "February"
+		return "FEBRUARY"
 	case 3:
-		return "March"
+		return "MARCH"
 	case 4:
-		return "April"
+		return "APRIL"
 	case 5:
-		return "May"
+		return "MAY"
 	case 6:
-		return "June"
+		return "JUNE"
 	case 7:
-		return "July"
+		return "JULY"
 	case 8:
-		return "August"
+		return "AUGUST"
 	case 9:
-		return "September"
+		return "SEPTEMBER"
 	case 10:
-		return "October"
+		return "OCTOBER"
 	case 11:
-		return "November"
+		return "NOVEMBER"
 	case 12:
-		return "December"
+		return "DECEMBER"
 	default:
 		return ""
 	}
