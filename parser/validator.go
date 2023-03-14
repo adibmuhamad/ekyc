@@ -2,6 +2,7 @@ package parser
 
 import (
 	"errors"
+	"strings"
 )
 
 func ValidateNik(text string, nikMap NikMap) (err error) {
@@ -18,4 +19,24 @@ func ValidateNik(text string, nikMap NikMap) (err error) {
 	}
 
 	return errors.New("Invalid NIK number")
+}
+
+func ValidateNpwp(text string) (err error) {
+	a := strings.Split(text, ".")
+
+	if len(a) == 5 {
+
+		b := strings.Split(a[3], "-")
+		if len(b) != 2 {
+			return errors.New("Invalid NPWP number")
+		}
+		if len(a[0]) != 2 && len(a[1]) != 3 && len(a[2]) != 3 && len(b[0]) != 1 && len(b[1]) != 3 && len(a[4]) != 3 {
+			return errors.New("Invalid NPWP number")
+		}
+
+		return nil
+
+	}
+
+	return errors.New("Invalid NPWP number")
 }

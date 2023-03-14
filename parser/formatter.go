@@ -24,6 +24,15 @@ type Nik struct {
 	Unicode     string `json:"unicode"`
 }
 
+type Npwp struct {
+	NumberId           string `json:"idNumber"`
+	TaxPayerCode       string `json:"taxPayerCode"`
+	Serial             string `json:"serial"`
+	CheckDigit         string `json:"checkDigit"`
+	LocalTaxOfficeCode string `json:"localTaxOfficeCode"`
+	BranchCode         string `json:"branchCode"`
+}
+
 func FormatDataNik(text string, nikMap NikMap) (Nik, error) {
 	format := Nik{}
 	format.NumberId = text
@@ -39,6 +48,24 @@ func FormatDataNik(text string, nikMap NikMap) (Nik, error) {
 	atoi, _ := strconv.Atoi(text[6:8])
 	format.IsFemale = atoi > 40
 	format.DateOfBirth = GetDateOfBirth(text)
+
+	return format, nil
+
+}
+
+func FormatDataNpwp(text string) (Npwp, error) {
+	format := Npwp{}
+	format.NumberId = text
+
+	a := strings.Split(text, ".")
+
+	format.TaxPayerCode = a[0]
+	format.Serial = a[1] + a[2]
+	b := strings.Split(a[3], "-")
+	format.CheckDigit = b[0]
+
+	format.LocalTaxOfficeCode = b[1]
+	format.BranchCode = a[4]
 
 	return format, nil
 

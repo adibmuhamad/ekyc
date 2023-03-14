@@ -26,6 +26,7 @@ func main() {
 	api.POST("/ocr/npwp", ocrHandler.CheckOcrNpwp)
 
 	api.POST("/parser/ktp", parserHandler.ParserDataNik)
+	api.POST("/parser/npwp", parserHandler.ParserDataNpwp)
 
 	router.Run()
 

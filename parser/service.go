@@ -11,6 +11,7 @@ type service struct {
 
 type Service interface {
 	ParseDataKtp(input ParserInput) (Nik, error)
+	ParseDataNpwp(input ParserInput) (Npwp, error)
 }
 
 func NewService() *service {
@@ -39,6 +40,24 @@ func (s *service) ParseDataKtp(input ParserInput) (Nik, error) {
 	}
 
 	return nik, nil
+
+}
+
+func (s *service) ParseDataNpwp(input ParserInput) (Npwp, error) {
+	npwp := Npwp{}
+
+	// Validate NPWP number
+	err := ValidateNpwp(input.NumberID)
+	if err != nil {
+		return Npwp{}, err
+	}
+
+	npwp, err = FormatDataNpwp(input.NumberID)
+	if err != nil {
+		return Npwp{}, err
+	}
+
+	return npwp, nil
 
 }
 
