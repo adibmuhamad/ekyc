@@ -25,6 +25,7 @@ func main() {
 	api.POST("/ocr/ktp", ocrHandler.CheckOcrKtp)
 	api.POST("/ocr/npwp", ocrHandler.CheckOcrNpwp)
 	api.POST("/ocr/sim", ocrHandler.CheckOcrSim)
+	api.POST("/ocr/passport", ocrHandler.CheckOcrPassport)
 
 	api.POST("/parser/ktp", parserHandler.ParserDataNik)
 	api.POST("/parser/npwp", parserHandler.ParserDataNpwp)

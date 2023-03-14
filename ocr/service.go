@@ -18,6 +18,7 @@ type Service interface {
 	CheckOcrKtp(input OcrInput) (OcrKtp, error)
 	CheckOcrNpwp(input OcrInput) (OcrNpwp, error)
 	CheckOcrSim(input OcrInput) (OcrSim, error)
+	CheckOcrPassport(input OcrInput) (Ocrpassport, error)
 }
 
 func NewService() *service {
@@ -110,7 +111,7 @@ func (s *service) CheckOcrSim(input OcrInput) (OcrSim, error) {
 		return ocr, err
 	}
 
-	// Validate image ktp
+	// Validate image sim
 	err = ValidateImage(sDec)
 	if err != nil {
 		return ocr, err
@@ -175,7 +176,7 @@ func (s *service) CheckOcrNpwp(input OcrInput) (OcrNpwp, error) {
 		return ocr, err
 	}
 
-	// Validate image ktp
+	// Validate image npwp
 	err = ValidateImage(sDec)
 	if err != nil {
 		return ocr, err
@@ -214,6 +215,71 @@ func (s *service) CheckOcrNpwp(input OcrInput) (OcrNpwp, error) {
 	}
 
 	ocr, err = FormatDataNpwp(text)
+	if err != nil {
+		return ocr, err
+	}
+
+	return ocr, nil
+
+}
+
+func (s *service) CheckOcrPassport(input OcrInput) (Ocrpassport, error) {
+	ocr := Ocrpassport{}
+
+	// Get base64 from json request
+	base64Image := input.OcrImage
+
+	// Decode base64 to byte
+	sDec, err := base64.StdEncoding.DecodeString(base64Image)
+	if err != nil {
+		return ocr, err
+	}
+
+	// Decode byte to image struct
+	img, _, err := image.Decode(bytes.NewReader(sDec))
+	if err != nil {
+		return ocr, err
+	}
+
+	// Validate image passport
+	err = ValidateImage(sDec)
+	if err != nil {
+		return ocr, err
+	}
+
+	// Convert Image to grayscale
+	// grayscale := effect.Grayscale(img)
+
+	// Convert Image to threshold segment
+	// threshold := segment.Threshold(grayscale, 128)
+
+	// Convert Image to Bytes
+	buf := new(bytes.Buffer)
+	jpeg.Encode(buf, img, nil)
+
+	// Initiation Gosseract new client
+	client := gosseract.NewClient()
+
+	// close client when the main function is finished running
+	defer client.Close()
+
+	// Read byte to image and set whitelist character
+	client.SetImageFromBytes(buf.Bytes())
+	client.SetLanguage("eng")
+
+	// Get text result from OCR
+	text, err := client.Text()
+	if err != nil {
+		return ocr, err
+	}
+
+	// Validate data passport
+	err = ValidateImagePassport(text)
+	if err != nil {
+		return ocr, err
+	}
+
+	ocr, err = FormatDataPassport(text)
 	if err != nil {
 		return ocr, err
 	}

@@ -44,6 +44,19 @@ type OcrSim struct {
 	MB           string `json:"mb"`
 }
 
+type Ocrpassport struct {
+	NumberID     string `json:"idNumber"`
+	PassportType string `json:"passportType"`
+	CountryCode  string `json:"countryCode"`
+	FullName     string `json:"fullname"`
+	Nationality  string `json:"nationality"`
+	DateOfBirth  string `json:"dateOfBirth"`
+	PlaceOfBirth string `json:"placeOfBirth"`
+	Sex          string `json:"sex"`
+	DateOfIssue  string `json:"dateOfIssue"`
+	DateOfExpiry string `json:"dateOfExpiry"`
+}
+
 func FormatDataKtp(text string) (formatKtp OcrKtp, err error) {
 
 	var (
@@ -294,4 +307,84 @@ func FormatDataSim(text string) (formatSim OcrSim, err error) {
 	}
 
 	return formatSim, nil
+}
+
+func FormatDataPassport(text string) (formatPassport Ocrpassport, err error) {
+	var (
+		datas     []string
+		reg       *regexp.Regexp
+		countData int
+	)
+
+	// Split string
+	datas = strings.Split(strings.Replace(text, "\n\n", "\n", -1), "\n")
+
+	// Regex config
+	reg, _ = regexp.Compile("[^-A-Za-z0-9/.,'`: ]+")
+
+	// Check passport on right position
+	if len(datas) > 2 {
+		var re = regexp.MustCompile(`REPUBLIC OF INDONESIA`)
+
+		if !re.MatchString(datas[1]) {
+			return Ocrpassport{}, errors.New("Invalid Passport position image")
+		}
+	}
+
+	// looping data split
+	for _, data := range datas {
+
+		data = reg.ReplaceAllString(data, "")
+
+		if countData == 3 {
+			a := strings.Split(data, " ")
+			if len(a) >= 4 {
+				formatPassport.PassportType = strings.TrimSpace(a[1])
+				formatPassport.CountryCode = strings.TrimSpace(a[2])
+				formatPassport.NumberID = strings.TrimSpace(a[3])
+			}
+
+		}
+
+		if countData == 5 {
+			a := strings.Split(data, ",")
+			if len(a) >= 1 {
+				replacer := strings.NewReplacer("PIF", "", "LIM", "", "P/F", "", "L/M", "")
+				formatPassport.FullName = strings.TrimSpace(replacer.Replace(a[1]))
+				var re = regexp.MustCompile("PIF|P/F")
+				if re.MatchString(a[1]) {
+					formatPassport.Sex = "FEMALE"
+				} else {
+					formatPassport.Sex = "MALE"
+				}
+
+			}
+		}
+
+		if countData == 7 {
+			formatPassport.Nationality = strings.TrimSpace(data)
+		}
+
+		if countData == 9 {
+			a := strings.Split(data, " ")
+			if len(a) > 3 {
+				formatPassport.DateOfBirth = strings.TrimSpace(a[0] + " " + a[1] + " " + a[2])
+				formatPassport.PlaceOfBirth = strings.TrimSpace(a[3])
+			}
+
+		}
+
+		if countData == 11 {
+			a := strings.Split(data, " ")
+			if len(a) >= 4 {
+				formatPassport.DateOfIssue = strings.TrimSpace(a[1] + " " + a[2] + " " + a[3])
+				formatPassport.DateOfExpiry = strings.TrimSpace(a[4] + " " + a[5] + " " + a[6])
+			}
+
+		}
+
+		countData++
+	}
+
+	return formatPassport, nil
 }

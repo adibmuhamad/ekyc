@@ -77,3 +77,18 @@ func ValidateImageSim(data string) (err error) {
 
 	return errors.New("Invalid SIM image")
 }
+
+func ValidateImagePassport(data string) (err error) {
+	if len(strings.TrimSpace(data)) == 0 || err != nil {
+		return errors.New("Invalid Passport image")
+	}
+
+	var re = regexp.MustCompile(`REPUBLIC OF INDONESIA`)
+
+	if re.MatchString(data) {
+		return nil
+	}
+
+
+	return errors.New("Invalid Passport image")
+}
