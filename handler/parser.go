@@ -29,14 +29,14 @@ func (h *parserHandler) ParserDataNik(c *gin.Context) {
 		return
 	}
 
-	newOcr, err := h.parserService.ParseDataKtp(input)
+	newParser, err := h.parserService.ParseDataKtp(input)
 	if err != nil {
 		response := helper.APIResponse(err.Error(), http.StatusBadRequest, "FAILED", nil)
 		c.JSON(http.StatusOK, response)
 		return
 	}
 
-	response := helper.APIResponse("OK", http.StatusOK, "SUCCESS", newOcr)
+	response := helper.APIResponse("OK", http.StatusOK, "SUCCESS", newParser)
 	c.JSON(http.StatusOK, response)
 
 }
@@ -54,14 +54,14 @@ func (h *parserHandler) ParserDataNpwp(c *gin.Context) {
 		return
 	}
 
-	newOcr, err := h.parserService.ParseDataNpwp(input)
+	newParser, err := h.parserService.ParseDataNpwp(input)
 	if err != nil {
 		response := helper.APIResponse(err.Error(), http.StatusBadRequest, "FAILED", nil)
 		c.JSON(http.StatusOK, response)
 		return
 	}
 
-	response := helper.APIResponse("OK", http.StatusOK, "SUCCESS", newOcr)
+	response := helper.APIResponse("OK", http.StatusOK, "SUCCESS", newParser)
 	c.JSON(http.StatusOK, response)
 
 }
@@ -79,14 +79,14 @@ func (h *parserHandler) ParserDataSim(c *gin.Context) {
 		return
 	}
 
-	newOcr, err := h.parserService.ParseDataSim(input)
+	newParser, err := h.parserService.ParseDataSim(input)
 	if err != nil {
 		response := helper.APIResponse(err.Error(), http.StatusBadRequest, "FAILED", nil)
 		c.JSON(http.StatusOK, response)
 		return
 	}
 
-	response := helper.APIResponse("OK", http.StatusOK, "SUCCESS", newOcr)
+	response := helper.APIResponse("OK", http.StatusOK, "SUCCESS", newParser)
 	c.JSON(http.StatusOK, response)
 
 }
