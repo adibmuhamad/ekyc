@@ -1,6 +1,7 @@
 package ocr
 
 import (
+	"errors"
 	"regexp"
 	"strings"
 )
@@ -35,7 +36,7 @@ type OcrSim struct {
 	Name         string `json:"name"`
 	Address      string `json:"address"`
 	Province     string `json:"province"`
-	DistrictCity     string `json:"districtCity"`
+	DistrictCity string `json:"districtCity"`
 	PlaceOfBirth string `json:"placeOfBirth"`
 	DateOfBirth  string `json:"dateOfBirth"`
 	Gender       string `json:"gender"`
@@ -56,6 +57,15 @@ func FormatDataKtp(text string) (formatKtp OcrKtp, err error) {
 
 	// Regex config
 	reg, _ = regexp.Compile("[^-A-Za-z0-9/.,'` ]+")
+
+	// Check npwp on right position
+	if len(datas) > 3 {
+		var re = regexp.MustCompile(`NIK`)
+
+		if !re.MatchString(datas[2]) {
+			return OcrKtp{}, errors.New("Invalid KTP position image")
+		}
+	}
 
 	//looping data split
 	for _, data := range datas {
@@ -167,6 +177,15 @@ func FormatDataNpwp(text string) (formatNpwp OcrNpwp, err error) {
 	// Regex config
 	reg, _ = regexp.Compile("[^-A-Za-z0-9/.,'` ]+")
 
+	// Check npwp on right position
+	if len(datas) > 3 {
+		var re = regexp.MustCompile(`NPWP`)
+
+		if !re.MatchString(datas[2]) {
+			return OcrNpwp{}, errors.New("Invalid NPWP position image")
+		}
+	}
+
 	//looping data split
 	for _, data := range datas {
 
@@ -208,13 +227,22 @@ func FormatDataSim(text string) (formatSim OcrSim, err error) {
 	// Regex config
 	reg, _ = regexp.Compile("[^-A-Za-z0-9/.,'`: ]+")
 
+	// Check sim on right position
+	if len(datas) > 1 {
+		var re = regexp.MustCompile(`SURAT IZIN MENGEMUDI`)
+
+		if !re.MatchString(datas[1]) {
+			return OcrSim{}, errors.New("Invalid KTP position image")
+		}
+	}
+
 	// looping data split
 	for _, data := range datas {
 
 		data = reg.ReplaceAllString(data, "")
 
 		if countData == 1 {
-			a := strings.Split(data ,"SURAT IZIN MENGEMUDI")
+			a := strings.Split(data, "SURAT IZIN MENGEMUDI")
 			formatSim.SimType = strings.TrimSpace(a[1])
 		}
 
@@ -223,24 +251,24 @@ func FormatDataSim(text string) (formatSim OcrSim, err error) {
 		}
 
 		if countData == 3 {
-			a := strings.Split(data ,".")
+			a := strings.Split(data, ".")
 			formatSim.Name = strings.TrimSpace(a[1])
 		}
 
 		if countData == 4 {
-			a := strings.Split(data ,".")
-			b := strings.Split(a[1] ,",")
+			a := strings.Split(data, ".")
+			b := strings.Split(a[1], ",")
 			formatSim.PlaceOfBirth = strings.TrimSpace(b[0])
 			formatSim.DateOfBirth = strings.TrimSpace(b[1])
 		}
 
 		if countData == 5 {
-			a := strings.Split(data ,"-")
+			a := strings.Split(data, "-")
 			formatSim.Gender = strings.TrimSpace(a[1])
 		}
 
 		if countData == 6 {
-			a := strings.Split(data ,".")
+			a := strings.Split(data, ".")
 			formatSim.Address = strings.TrimSpace(a[1])
 		}
 
@@ -253,12 +281,12 @@ func FormatDataSim(text string) (formatSim OcrSim, err error) {
 		}
 
 		if countData == 9 {
-			a := strings.Split(data ,".")
+			a := strings.Split(data, ".")
 			formatSim.Occupation = strings.TrimSpace(a[1])
 		}
 
 		if countData == 10 {
-			a := strings.Split(data ,".")
+			a := strings.Split(data, ".")
 			formatSim.MB = strings.TrimSpace(a[1])
 		}
 
