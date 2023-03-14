@@ -1,3 +1,3 @@
-# eKYC
+# Indonesia eKYC
 
-Golang eKYC Service
+Golang Indonesia eKYC Service
