@@ -34,6 +34,7 @@ func main() {
 	api.POST("/ocr/passport", ocrHandler.CheckOcrPassport)
 
 	api.POST("/detect/face-detection", detectHandler.DetectFace)
+	api.POST("/detect/face-compare", detectHandler.CompareFace)
 
 	api.POST("/parser/ktp", parserHandler.ParserDataNik)
 	api.POST("/parser/npwp", parserHandler.ParserDataNpwp)

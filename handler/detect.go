@@ -41,3 +41,28 @@ func (h *detectHandler) DetectFace(c *gin.Context) {
 
 }
 
+func (h *detectHandler) CompareFace(c *gin.Context) {
+	var input detect.CompareInput
+
+	err := c.ShouldBindJSON(&input)
+	if err != nil {
+		errors := helper.FormatValidationError(err)
+		errorMessage := gin.H{"errors": errors}
+
+		response := helper.APIResponse("Unable to process request", http.StatusUnprocessableEntity, "FAILED", errorMessage)
+		c.JSON(http.StatusOK, response)
+		return
+	}
+
+	newDetect, err := h.detectService.CompareFace(input)
+	if err != nil {
+		response := helper.APIResponse(err.Error(), http.StatusBadRequest, "FAILED", newDetect)
+		c.JSON(http.StatusOK, response)
+		return
+	}
+
+	response := helper.APIResponse("OK", http.StatusOK, "SUCCESS", newDetect)
+	c.JSON(http.StatusOK, response)
+
+}
+
