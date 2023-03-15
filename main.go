@@ -1,6 +1,7 @@
 package main
 
 import (
+	"id/projects/ekyc/detect"
 	"id/projects/ekyc/handler"
 	"id/projects/ekyc/ocr"
 	"id/projects/ekyc/parser"
@@ -13,10 +14,12 @@ import (
 func main() {
 
 	ocrService := ocr.NewService()
+	detectService := detect.NewService()
 	parserService := parser.NewService()
 	verifyService := verify.NewService()
 
 	ocrHandler := handler.NewOcrHandler(ocrService)
+	detectHandler := handler.NewDetectHandler(detectService)
 	parserHandler := handler.NewParserHandler(parserService)
 	verifyHandler := handler.NewVerifyHandler(verifyService)
 
@@ -29,6 +32,8 @@ func main() {
 	api.POST("/ocr/npwp", ocrHandler.CheckOcrNpwp)
 	api.POST("/ocr/sim", ocrHandler.CheckOcrSim)
 	api.POST("/ocr/passport", ocrHandler.CheckOcrPassport)
+
+	api.POST("/detect/face-detection", detectHandler.DetectFace)
 
 	api.POST("/parser/ktp", parserHandler.ParserDataNik)
 	api.POST("/parser/npwp", parserHandler.ParserDataNpwp)

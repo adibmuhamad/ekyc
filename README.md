@@ -10,6 +10,10 @@ An open-source integrated digital ID verification technology that streamlines e-
 
 OCR KTP, OCR NPWP, OCR Indonesia Driving License (SIM), OCR Indonesia Passport.
 
+### Visual Compliance
+
+Face Detection.
+
 ## Contributing
 
 Feel free to contribute! Here's how you can contribute:
@@ -24,5 +28,5 @@ Feel free to contribute! Here's how you can contribute:
 ## License
 Copyright © 2023 Muhammad Adib Yusrul Muna
 
-This software is distributed under the MIT license. See the [LICENSE](https://github.com/adibmuhamad/ekyc/master/LICENSE) file for the full license text.
+This software is distributed under the MIT license. See the [LICENSE](https://github.com/adibmuhamad/ekyc/blob/main/LICENSE) file for the full license text.
 
