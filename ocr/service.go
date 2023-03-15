@@ -38,13 +38,15 @@ func (s *service) CheckOcrKtp(input OcrInput) (OcrKtp, error) {
 	}
 
 	// Decode byte to image struct
-	img, _, err := image.Decode(bytes.NewReader(sDec))
+	img, format, err := image.Decode(bytes.NewReader(sDec))
 	if err != nil {
 		return ocr, err
 	}
 
+	
+
 	// Validate image ktp
-	err = ValidateImage(sDec)
+	err = ValidateImage(sDec, format)
 	if err != nil {
 		return ocr, err
 	}
@@ -106,13 +108,13 @@ func (s *service) CheckOcrSim(input OcrInput) (OcrSim, error) {
 	}
 
 	// Decode byte to image struct
-	img, _, err := image.Decode(bytes.NewReader(sDec))
+	img, format, err := image.Decode(bytes.NewReader(sDec))
 	if err != nil {
 		return ocr, err
 	}
 
 	// Validate image sim
-	err = ValidateImage(sDec)
+	err = ValidateImage(sDec, format)
 	if err != nil {
 		return ocr, err
 	}
@@ -171,13 +173,13 @@ func (s *service) CheckOcrNpwp(input OcrInput) (OcrNpwp, error) {
 	}
 
 	// Decode byte to image struct
-	img, _, err := image.Decode(bytes.NewReader(sDec))
+	img, format, err := image.Decode(bytes.NewReader(sDec))
 	if err != nil {
 		return ocr, err
 	}
 
 	// Validate image npwp
-	err = ValidateImage(sDec)
+	err = ValidateImage(sDec, format)
 	if err != nil {
 		return ocr, err
 	}
@@ -236,13 +238,13 @@ func (s *service) CheckOcrPassport(input OcrInput) (Ocrpassport, error) {
 	}
 
 	// Decode byte to image struct
-	img, _, err := image.Decode(bytes.NewReader(sDec))
+	img, format, err := image.Decode(bytes.NewReader(sDec))
 	if err != nil {
 		return ocr, err
 	}
 
 	// Validate image passport
-	err = ValidateImage(sDec)
+	err = ValidateImage(sDec, format)
 	if err != nil {
 		return ocr, err
 	}

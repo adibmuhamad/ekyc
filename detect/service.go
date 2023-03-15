@@ -1,9 +1,13 @@
 package detect
 
 import (
+	"bytes"
 	"encoding/base64"
 	"errors"
 	"fmt"
+	"image"
+
+	"id/projects/ekyc/lib/forgery"
 
 	"github.com/Kagami/go-face"
 )
@@ -14,17 +18,18 @@ type service struct {
 }
 
 type Service interface {
-	DetectFace(input FaceInput) (DetectFace, error)
+	DetectFace(input ImageInput) (DetectFace, error)
 	CompareFace(input CompareInput) (CompareFace, error)
+	ImageForgery(input ImageInput) (ForgeryImage, error)
 }
 
 func NewService() *service {
 	return &service{}
 }
 
-func (s *service) DetectFace(input FaceInput) (DetectFace, error) {
+func (s *service) DetectFace(input ImageInput) (DetectFace, error) {
 	// Get base64 from json request
-	base64Image := input.FaceImage
+	base64Image := input.Image
 
 	// Decode base64 to byte
 	sDec, err := base64.StdEncoding.DecodeString(base64Image)
@@ -61,8 +66,23 @@ func (s *service) DetectFace(input FaceInput) (DetectFace, error) {
 
 	if len((faces)) > 1 {
 		dataFace.Valid = false
+
 		return dataFace, errors.New("Multiple face detected")
 	}
+
+	// Decode byte to image struct
+	// img, _, err := image.Decode(bytes.NewReader(sDec))
+	// if err != nil {
+	// 	return dataFace, err
+	// }
+
+	// precision := float64(forgery(img))
+	// if precision > 50.0 {
+	// 	print("%.8f the image is forged!", precision)
+	// } else {
+	// 	precision = 100 - precision
+	// 	print("%.8f the image is NOT forged!", precision)
+	// }
 
 	dataFace.Valid = true
 
@@ -78,23 +98,23 @@ func (s *service) CompareFace(input CompareInput) (CompareFace, error) {
 	// Decode base64 to byte
 	sFirstDec, err := base64.StdEncoding.DecodeString(base64ImageFirst)
 	if err != nil {
-		return CompareFace{}, errors.New("Error on first image: " + err.Error() )
+		return CompareFace{}, errors.New("Error on first image: " + err.Error())
 	}
 
 	sSecondDec, err := base64.StdEncoding.DecodeString(base64ImageSecond)
 	if err != nil {
-		return CompareFace{}, errors.New("Error on second image: " + err.Error() )
+		return CompareFace{}, errors.New("Error on second image: " + err.Error())
 	}
 
 	// Validate image
 	err = ValidateImage(sFirstDec)
 	if err != nil {
-		return CompareFace{}, errors.New("Error on first image: " + err.Error() )
+		return CompareFace{}, errors.New("Error on first image: " + err.Error())
 	}
 
 	err = ValidateImage(sSecondDec)
 	if err != nil {
-		return CompareFace{}, errors.New("Error on second image: " + err.Error() )
+		return CompareFace{}, errors.New("Error on second image: " + err.Error())
 	}
 
 	// Init the recognizer
@@ -109,12 +129,12 @@ func (s *service) CompareFace(input CompareInput) (CompareFace, error) {
 	// Recognize faces on that image.
 	firstFaces, err := rec.RecognizeCNN(sFirstDec)
 	if err != nil {
-		return CompareFace{}, errors.New("Error on first image: " + err.Error() )
+		return CompareFace{}, errors.New("Error on first image: " + err.Error())
 	}
 
 	secondFaces, err := rec.RecognizeCNN(sSecondDec)
 	if err != nil {
-		return CompareFace{}, errors.New("Error on second image: " +  err.Error())
+		return CompareFace{}, errors.New("Error on second image: " + err.Error())
 	}
 
 	dataCompare := CompareFace{}
@@ -149,5 +169,42 @@ func (s *service) CompareFace(input CompareInput) (CompareFace, error) {
 	dataCompare.Similarity = distance
 
 	return dataCompare, nil
+
+}
+
+func (s *service) ImageForgery(input ImageInput) (ForgeryImage, error) {
+	// Get base64 from json request
+	base64Image := input.Image
+
+	// Decode base64 to byte
+	sDec, err := base64.StdEncoding.DecodeString(base64Image)
+	if err != nil {
+		return ForgeryImage{}, err
+	}
+
+	// Validate image
+	err = ValidateImage(sDec)
+	if err != nil {
+		return ForgeryImage{}, err
+	}
+
+	// Decode byte to image struct
+	img, _, err := image.Decode(bytes.NewReader(sDec))
+	if err != nil {
+		return ForgeryImage{}, err
+	}
+
+	precision := float64(forgery.Forgery(img))
+
+	formater := ForgeryImage{}
+	if precision > 50.0 {
+		formater.Forged = true
+		formater.Precision = fmt.Sprintf("%.8f", precision)
+	} else {
+		formater.Forged = false
+		formater.Precision = fmt.Sprintf("%.8f", precision)
+	}
+
+	return formater, nil
 
 }

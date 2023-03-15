@@ -12,7 +12,7 @@ import (
 	_ "image/png"
 )
 
-func ValidateImage(data []byte) (err error) {
+func ValidateImage(data []byte, format string) (err error) {
 	images, _, err := image.DecodeConfig(bytes.NewReader(data))
 
 	if err != nil {
@@ -31,7 +31,12 @@ func ValidateImage(data []byte) (err error) {
 		return errors.New("Maximum resolution of 4096 x 4096")
 	}
 
-	return nil
+	if format == "jpeg" || format == "png" {
+		return nil
+	}
+
+	return errors.New("Image format is not jpeg/png")
+
 }
 
 func ValidateImageKtp(data string) (err error) {
@@ -74,7 +79,6 @@ func ValidateImageSim(data string) (err error) {
 		return nil
 	}
 
-
 	return errors.New("Invalid SIM image")
 }
 
@@ -88,7 +92,6 @@ func ValidateImagePassport(data string) (err error) {
 	if re.MatchString(data) {
 		return nil
 	}
-
 
 	return errors.New("Invalid Passport image")
 }
