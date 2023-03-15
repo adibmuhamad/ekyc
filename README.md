@@ -6,17 +6,17 @@ An open-source integrated digital ID verification technology that streamlines e-
 
 ## What you can find in this project
 
-### Visual Compliance
+### Optical Character Recognition (OCR)
 
-Photocopy detection, Landmark detection, Screen detection, Blurriness detection, Liveness detection, Face comparison, .
+OCR KTP, OCR NPWP, OCR Indonesia Driving License (SIM), OCR Indonesia Passport.
 
-### Content Tampering Detection
 
-ID forgery detection.
+## Contributing
 
-### Identity Proofing
+Feel free to contribute! Here's how you can contribute:
 
-Evidence of real-world existence through automated online database check.
+- [Open an issue](https://github.com/adibmuhamad/ekyc/issues) if you believe you've encountered a bug.
+- Make a [pull request](https://github.com/adibmuhamad/ekyc/pull) to add new features/make quality-of-life improvements/fix bugs.
 
 ## Author
 
