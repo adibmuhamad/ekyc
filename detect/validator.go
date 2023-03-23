@@ -4,6 +4,8 @@ import (
 	"bytes"
 	"errors"
 	"image"
+	"regexp"
+	"strings"
 
 	_ "image/gif"
 	_ "image/jpeg"
@@ -26,5 +28,20 @@ func ValidateImage(data []byte) (err error) {
 	}
 
 	return nil
+}
+
+func ValidateImageKtp(data string) (err error) {
+	if len(strings.TrimSpace(data)) == 0 || err != nil {
+		return errors.New("Invalid KTP image")
+	}
+
+	var re = regexp.MustCompile(`NIK`)
+	var nonRe = regexp.MustCompile(`NPWP`)
+
+	if re.MatchString(data) && !nonRe.MatchString(data) {
+		return nil
+	}
+
+	return errors.New("Invalid KTP image")
 }
 

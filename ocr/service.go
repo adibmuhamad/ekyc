@@ -6,8 +6,6 @@ import (
 	"image"
 	"image/jpeg"
 
-	// "github.com/anthonynsimon/bild/effect"
-	// "github.com/anthonynsimon/bild/segment"
 	"github.com/otiai10/gosseract/v2"
 )
 
@@ -43,19 +41,11 @@ func (s *service) CheckOcrKtp(input OcrInput) (OcrKtp, error) {
 		return ocr, err
 	}
 
-	
-
 	// Validate image ktp
 	err = ValidateImage(sDec, format)
 	if err != nil {
 		return ocr, err
 	}
-
-	// Convert Image to grayscale
-	// grayscale := effect.Grayscale(img)
-
-	// Convert Image to threshold segment
-	// threshold := segment.Threshold(grayscale, 128)
 
 	// Convert Image to Bytes
 	buf := new(bytes.Buffer)
@@ -119,12 +109,6 @@ func (s *service) CheckOcrSim(input OcrInput) (OcrSim, error) {
 		return ocr, err
 	}
 
-	// Convert Image to grayscale
-	// grayscale := effect.Grayscale(img)
-
-	// Convert Image to threshold segment
-	// threshold := segment.Threshold(grayscale, 128)
-
 	// Convert Image to Bytes
 	buf := new(bytes.Buffer)
 	jpeg.Encode(buf, img, nil)
@@ -184,12 +168,6 @@ func (s *service) CheckOcrNpwp(input OcrInput) (OcrNpwp, error) {
 		return ocr, err
 	}
 
-	// Convert Image to grayscale
-	// grayscale := effect.Grayscale(img)
-
-	// Convert Image to threshold segment
-	// threshold := segment.Threshold(grayscale, 128)
-
 	// Convert Image to Bytes
 	buf := new(bytes.Buffer)
 	jpeg.Encode(buf, img, nil)
@@ -248,12 +226,6 @@ func (s *service) CheckOcrPassport(input OcrInput) (Ocrpassport, error) {
 	if err != nil {
 		return ocr, err
 	}
-
-	// Convert Image to grayscale
-	// grayscale := effect.Grayscale(img)
-
-	// Convert Image to threshold segment
-	// threshold := segment.Threshold(grayscale, 128)
 
 	// Convert Image to Bytes
 	buf := new(bytes.Buffer)

@@ -5,11 +5,13 @@ go 1.17
 require (
 	github.com/Kagami/go-face v0.0.0-20210630145111-0c14797b4d0e
 	github.com/cameronnewman/go-emailvalidation/v3 v3.2.74
+	github.com/corona10/goimagehash v1.1.0
 	github.com/gin-contrib/cors v1.4.0
 	github.com/gin-gonic/gin v1.9.0
 	github.com/go-playground/validator/v10 v10.11.2
 	github.com/nfnt/resize v0.0.0-20180221191011-83c6a9932646
 	github.com/otiai10/gosseract/v2 v2.4.0
+	gocv.io/x/gocv v0.32.1
 )
 
 require (

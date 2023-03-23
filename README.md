@@ -12,7 +12,7 @@ OCR KTP, OCR NPWP, OCR Indonesia Driving License (SIM), OCR Indonesia Passport.
 
 ### Visual Compliance
 
-Face Detection, Face Comparison, Image Forgery.
+Face Detection, Face Comparison (KTP with Face Image), Signature Comparison (KTP with Signature Image), Image Forgery.
 
 ## Contributing
 

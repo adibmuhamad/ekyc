@@ -8,8 +8,14 @@ type DetectFace struct {
 }
 
 type CompareFace struct {
-	FirstImageValid bool `json:"firstImageValid"`
-	SecondImageValid bool `json:"secondImageValid"`
+	KTPImageValid bool `json:"ktpImageValid"`
+	FaceImageValid bool `json:"faceImageValid"`
+	Similarity string `json:"similarity"`
+}
+
+type CompareSignature struct {
+	KTPImageValid bool `json:"ktpImageValid"`
+	SignatureImageValid bool `json:"signatureImageValid"`
 	Similarity string `json:"similarity"`
 }
 

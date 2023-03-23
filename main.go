@@ -35,6 +35,7 @@ func main() {
 
 	api.POST("/detect/face-detection", detectHandler.DetectFace)
 	api.POST("/detect/face-compare", detectHandler.CompareFace)
+	api.POST("/detect/signature-compare", detectHandler.CompareSignature)
 	api.POST("/detect/forgery", detectHandler.ImageForgery)
 
 	api.POST("/parser/ktp", parserHandler.ParserDataNik)
